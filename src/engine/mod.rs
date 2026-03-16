@@ -11,6 +11,10 @@ pub struct Engine {
 }
 
 impl Engine {
+    pub fn client(&self) -> &Client {
+        &self.client
+    }
+
     pub fn new() -> Self {
         let client = Client::builder()
             .danger_accept_invalid_certs(false)

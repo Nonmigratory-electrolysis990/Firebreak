@@ -1,4 +1,5 @@
 mod analysis;
+mod investigate;
 mod knowledge;
 mod scan;
 
@@ -10,6 +11,7 @@ pub fn definitions() -> Vec<ToolDefinition> {
     let mut defs = knowledge_definitions();
     defs.extend(scan::definitions());
     defs.extend(analysis::definitions());
+    defs.extend(investigate::definitions());
     defs
 }
 
@@ -27,6 +29,14 @@ pub async fn call(name: &str, args: &Value, state: &AppState) -> ToolCallResult 
         | "firebreak_scan_target"
         | "firebreak_scan_status"
         | "firebreak_scan_stop" => scan::call(name, args, state).await,
+
+        "firebreak_fetch"
+        | "firebreak_analyze_page"
+        | "firebreak_analyze_js"
+        | "firebreak_probe"
+        | "firebreak_domain_info"
+        | "firebreak_extract_forms"
+        | "firebreak_extract_scripts" => investigate::call(name, args, state).await,
 
         "firebreak_results"
         | "firebreak_finding_detail"
