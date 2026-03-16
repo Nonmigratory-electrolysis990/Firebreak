@@ -27,9 +27,15 @@ impl Engine {
         findings.extend(checks::check_sensitive_paths(&self.client, target, safety).await);
         findings.extend(checks::check_cors(&self.client, target, safety).await);
         findings.extend(checks::check_tls_redirect(&self.client, target, safety).await);
+        findings.extend(checks::check_https_enforcement(&self.client, target, safety).await);
         findings.extend(checks::check_server_version(&self.client, target, safety).await);
         findings.extend(checks::check_null_origin_cors(&self.client, target, safety).await);
         findings.extend(checks::check_permissions_policy(&self.client, target, safety).await);
+        findings.extend(checks::check_csp_quality(&self.client, target, safety).await);
+        findings.extend(checks::check_information_headers(&self.client, target, safety).await);
+        findings.extend(checks::check_response_headers_advanced(&self.client, target, safety).await);
+        findings.extend(checks::check_cookie_security(&self.client, target, safety).await);
+        findings.extend(checks::check_http_methods(&self.client, target, safety).await);
         findings
     }
 
@@ -55,6 +61,16 @@ impl Engine {
         findings.extend(checks::check_api_exposure(&self.client, target, safety).await);
         findings.extend(checks::check_sequential_ids(&self.client, target, safety).await);
         findings.extend(checks::check_robots_sitemap(&self.client, target, safety).await);
+        findings.extend(checks::check_technology_stack(&self.client, target, safety).await);
+        findings.extend(checks::check_rate_limiting(&self.client, target, safety).await);
+        findings.extend(checks::check_subdomain_hints(&self.client, target, safety).await);
+        findings.extend(checks::check_form_security(&self.client, target, safety).await);
+        findings.extend(checks::check_open_redirect(&self.client, target, safety).await);
+        findings.extend(checks::check_error_pages(&self.client, target, safety).await);
+        findings.extend(checks::check_mixed_content(&self.client, target, safety).await);
+        findings.extend(checks::check_host_header_injection(&self.client, target, safety).await);
+        findings.extend(checks::check_security_txt(&self.client, target, safety).await);
+        findings.extend(checks::check_cache_headers(&self.client, target, safety).await);
 
         dedup_findings(&mut findings);
         findings
@@ -78,6 +94,7 @@ impl Engine {
                 findings.extend(checks::check_parameter_fuzzing_urls(&self.client, &api_urls, safety).await);
                 findings.extend(checks::check_api_exposure(&self.client, target, safety).await);
                 findings.extend(checks::check_sequential_ids(&self.client, target, safety).await);
+                findings.extend(checks::check_open_redirect(&self.client, target, safety).await);
                 dedup_findings(&mut findings);
                 findings
             }
@@ -90,10 +107,22 @@ impl Engine {
                 findings.extend(checks::check_null_origin_cors(&self.client, target, safety).await);
                 findings.extend(checks::check_permissions_policy(&self.client, target, safety).await);
                 findings.extend(checks::check_robots_sitemap(&self.client, target, safety).await);
+                findings.extend(checks::check_response_headers_advanced(&self.client, target, safety).await);
+                findings.extend(checks::check_subdomain_hints(&self.client, target, safety).await);
+                findings.extend(checks::check_error_pages(&self.client, target, safety).await);
+                findings.extend(checks::check_cookie_security(&self.client, target, safety).await);
+                findings.extend(checks::check_http_methods(&self.client, target, safety).await);
+                findings.extend(checks::check_csp_quality(&self.client, target, safety).await);
+                findings.extend(checks::check_cache_headers(&self.client, target, safety).await);
                 findings
             }
             "injection" => checks::check_parameter_fuzzing(&self.client, target, safety).await,
-            "frontend" => checks::check_frontend_exposure(&self.client, target, safety).await,
+            "frontend" => {
+                let mut findings = checks::check_frontend_exposure(&self.client, target, safety).await;
+                findings.extend(checks::check_technology_stack(&self.client, target, safety).await);
+                findings.extend(checks::check_form_security(&self.client, target, safety).await);
+                findings
+            }
             _ => self.quick_scan(target, safety).await,
         }
     }
