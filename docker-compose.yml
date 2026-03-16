@@ -1,0 +1,18 @@
+services:
+  firebreak:
+    build: .
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./data:/data
+      - ./config:/config
+    environment:
+      FIREBREAK_MODE: self-hosted
+      RUST_LOG: firebreak=info
+    depends_on:
+      - chromium
+    restart: unless-stopped
+
+  chromium:
+    image: chromedp/headless-shell:latest
+    restart: unless-stopped

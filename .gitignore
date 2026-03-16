@@ -1,0 +1,7 @@
+/target
+.env
+*.swp
+*.swo
+data/*.db
+frontend/node_modules
+frontend/dist
