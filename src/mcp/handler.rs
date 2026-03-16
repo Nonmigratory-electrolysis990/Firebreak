@@ -36,7 +36,7 @@ pub async fn handle_mcp(
     Json(response).into_response()
 }
 
-async fn dispatch(req: &JsonRpcRequest, state: &AppState) -> JsonRpcResponse {
+pub async fn dispatch(req: &JsonRpcRequest, state: &AppState) -> JsonRpcResponse {
     match req.method.as_str() {
         "initialize" => success(req, initialize()),
         "ping" => success(req, Value::Object(Default::default())),
